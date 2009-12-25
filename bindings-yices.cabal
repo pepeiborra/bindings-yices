@@ -19,7 +19,7 @@ Synopsis:            Bindings to the Yices theorem prover
 License:             PublicDomain
 
 -- The package author(s).
-Author:              Pepe Iborra
+Author:              Jose Iborra
 
 -- An email address to which users can send suggestions, bug reports,
 -- and patches.
@@ -31,7 +31,7 @@ Maintainer:          pepeiborra@gmail.com
 -- Stability of the pakcage (experimental, provisional, stable...)
 Stability:           Experimental
 
-Category:            Foreign
+Category:            Foreign, FFI, Theorem Provers
 
 Build-type:          Simple
 
@@ -50,7 +50,7 @@ Library
 
   extra-libraries:     yices
   -- Packages needed in order to build this package.
-  Build-depends:       base
+  Build-depends:       base > 3 && < 5
   
   -- Modules not exported by this package.
   -- Other-modules:       
