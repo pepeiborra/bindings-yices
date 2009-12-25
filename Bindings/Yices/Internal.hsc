@@ -1,8 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE EmptyDataDecls #-}
 
-#include "yices_c.h"
-
 module Bindings.Yices.Internal where
 
 import Foreign
@@ -18,8 +16,10 @@ data YType
 data YModel
 data YVarIterator
 newtype AssertionId = AssertionId Int deriving (Eq, Ord)
-data YDef a = YDef a | YUndef
+data YDef a = YDef !a | YUndef
 
+
+#include "yices_c.h"
 
 -- -------------
 -- Marshalling
@@ -303,7 +303,7 @@ foreign import ccall unsafe "yices_c.h yices_iterator_next"
 --
 
 foreign import ccall unsafe "yices_c.h yices_iterator_reset"
-  c_iterator_reset :: Ptr YVarIterator -> IO (())
+  c_iterator_reset :: Ptr YVarIterator -> IO ()
 
 --
 

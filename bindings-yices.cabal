@@ -47,7 +47,8 @@ Library
   -- Modules exported by the library.
   Exposed-modules:     Bindings.Yices,
                        Bindings.Yices.Internal
-  
+
+  extra-libraries:     yices
   -- Packages needed in order to build this package.
   Build-depends:       base
   
@@ -56,5 +57,7 @@ Library
   
   -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
   Build-tools:         hsc2hs
+
   includes:            yices_c.h
-  extra_libraries:     yices
+
+  ghc-prof-options: -auto

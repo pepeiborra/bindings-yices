@@ -10,6 +10,8 @@ import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.C.String
 
+import qualified Data.Traversable as T
+
 type Context = Ptr YContext
 type Expr    = Ptr YExpr
 type Decl    = Ptr YDecl
@@ -26,6 +28,25 @@ data SAT a  = Sat a | Unknown a | Unsat
 
 mkContext :: IO Context
 mkContext = c_mk_context
+
+delContext :: Context -> IO ()
+delContext = c_del_context
+
+withContext :: (Context -> IO a) -> IO a
+withContext f = do {ctx <- c_mk_context; f ctx <* c_del_context ctx}
+
+setVerbosity :: Int -> IO ()
+setVerbosity = c_set_verbosity . fromIntegral
+
+setLogFile :: FilePath -> IO ()
+setLogFile fp = withCString fp c_enable_log_file
+
+enableTypeChecker :: Bool -> IO ()
+enableTypeChecker True  = c_enable_type_checker 1
+enableTypeChecker False = c_enable_type_checker 0
+
+isInconsistent :: Context -> IO Bool
+isInconsistent = liftM (toEnum.fromIntegral) . c_inconsistent
 
 -- * Assertions
 
@@ -79,13 +100,21 @@ getVarDecl ctx name = do
   ptr <- withCString name $ c_get_var_decl_from_name ctx
   return $ if nullPtr == ptr then Nothing else Just ptr
 
-getBoolValue :: Model -> VarDecl -> YBool
-getBoolValue m vd = eatYBool $ c_get_value m vd
+getVarFromDecl :: Context -> VarDecl -> IO Expr
+getVarFromDecl = c_mk_var_from_decl
+
+getVar :: Context -> String -> IO (Maybe Expr)
+getVar ctx name = getVarDecl ctx name >>= T.sequence . liftM (getVarFromDecl ctx)
 
 class YEval a where getValue :: Model -> VarDecl -> YDef a
 instance YEval Bool where getValue = getBoolValue
-instance YEval Int  where
-    getValue m vd = unsafePerformIO $ alloca $ \ptr -> do
+instance YEval Int  where getValue = getNatValue
+
+getBoolValue :: Model -> VarDecl -> YBool
+getBoolValue m vd = eatYBool $ c_get_value m vd
+
+getNatValue :: Model -> VarDecl -> YDef Int
+getNatValue m vd = unsafePerformIO $ alloca $ \ptr -> do
                               code <- c_get_int_value m vd ptr
                               case code of
                                 0 -> return YUndef
