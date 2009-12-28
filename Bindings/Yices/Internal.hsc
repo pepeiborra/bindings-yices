@@ -143,7 +143,7 @@ foreign import ccall unsafe "yices_c.h yices_find_weighted_model"
 --
 
 foreign import ccall unsafe "yices_c.h yices_evaluate_in_model"
-  c_evaluate_in_model :: Ptr YModel -> Ptr YExpr -> CInt
+  c_evaluate_in_model :: Ptr YModel -> Ptr YExpr -> IO CInt
 
 --
 
@@ -173,7 +173,7 @@ foreign import ccall unsafe "yices_c.h yices_get_unsat_core"
 --
 
 foreign import ccall unsafe "yices_c.h yices_get_value"
-  c_get_value :: Ptr YModel -> Ptr YVarDecl -> CInt
+  c_get_value :: Ptr YModel -> Ptr YVarDecl -> IO CInt
 
 --
 
@@ -198,7 +198,7 @@ foreign import ccall unsafe "yices_c.h yices_get_bitvector_value"
 --
 
 foreign import ccall unsafe "yices_c.h yices_get_assertion_value"
-  c_get_assertion_value :: Ptr YModel -> AssertionId -> CInt
+  c_get_assertion_value :: Ptr YModel -> AssertionId -> IO CInt
 
 --
 
@@ -208,12 +208,12 @@ foreign import ccall unsafe "yices_c.h yices_display_model"
 --
 
 foreign import ccall unsafe "yices_c.h yices_get_cost"
-  c_get_cost :: Ptr YModel -> CLLong
+  c_get_cost :: Ptr YModel -> IO CLLong
 
 --
 
 foreign import ccall unsafe "yices_c.h yices_get_cost_as_double"
-  c_get_cost_as_double :: Ptr YModel -> CDouble
+  c_get_cost_as_double :: Ptr YModel -> IO CDouble
 
 --
 

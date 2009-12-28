@@ -106,22 +106,22 @@ getVarFromDecl = c_mk_var_from_decl
 getVar :: Context -> String -> IO (Maybe Expr)
 getVar ctx name = getVarDecl ctx name >>= T.sequence . liftM (getVarFromDecl ctx)
 
-class YEval a where getValue :: Model -> VarDecl -> YDef a
+class YEval a where getValue :: Model -> VarDecl -> IO (YDef a)
 instance YEval Bool where getValue = getBoolValue
 instance YEval Int  where getValue = getNatValue
 
-getBoolValue :: Model -> VarDecl -> YBool
-getBoolValue m vd = eatYBool $ c_get_value m vd
+getBoolValue :: Model -> VarDecl -> IO YBool
+getBoolValue m = liftM eatYBool . c_get_value m
 
-getNatValue :: Model -> VarDecl -> YDef Int
-getNatValue m vd = unsafePerformIO $ alloca $ \ptr -> do
+getNatValue :: Model -> VarDecl -> IO (YDef Int)
+getNatValue m vd = alloca $ \ptr -> do
                               code <- c_get_int_value m vd ptr
                               case code of
                                 0 -> return YUndef
                                 1 -> YDef . fromIntegral <$> peek ptr
 
-evaluateInModel :: Model -> Expr -> YBool
-evaluateInModel m = eatYBool . c_evaluate_in_model m
+evaluateInModel :: Model -> Expr -> IO YBool
+evaluateInModel m = liftM eatYBool . c_evaluate_in_model m
 
 withVarIterator :: Context -> (VarIterator -> IO a) -> IO a
 withVarIterator ctx f = do
@@ -210,7 +210,7 @@ getBoolModel ctx m = withVarIterator ctx $ \iter ->
           then do
              v     <- c_iterator_next iter
              name  <- peekCString =<< c_get_var_decl_name v
-             let value = getValue m v
+             value <- getValue m v
              rest  <- go
              return ((name, value) : rest)
 
