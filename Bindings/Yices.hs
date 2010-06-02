@@ -48,6 +48,9 @@ enableTypeChecker False = c_enable_type_checker 0
 isInconsistent :: Context -> IO Bool
 isInconsistent = liftM (toEnum.fromIntegral) . c_inconsistent
 
+interrupt :: Context -> IO ()
+interrupt = c_interrupt
+
 -- * Assertions
 
 assert :: Context -> Expr -> IO ()

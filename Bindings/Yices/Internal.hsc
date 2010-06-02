@@ -21,6 +21,10 @@ data YDef a = YDef !a | YUndef
 
 #include "yices_c.h"
 
+
+foreign import ccall "yices_c.h yices_interrupt"
+  c_interrupt :: Ptr YContext -> IO (())
+
 -- -------------
 -- Marshalling
 -- -------------
