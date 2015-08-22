@@ -186,6 +186,11 @@ mkLt = c_mk_lt
 mkGt = c_mk_gt
 mkGe = c_mk_ge
 
+mkAdd, mkSub, mkMul :: Context -> [Expr] -> IO Expr
+mkAdd ctx ee = withArray ee $ \ee_a ->c_mk_sum ctx ee_a (fromIntegral $ length ee)
+mkSub ctx ee = withArray ee $ \ee_a ->c_mk_sub ctx ee_a (fromIntegral $ length ee)
+mkMul ctx ee = withArray ee $ \ee_a ->c_mk_mul ctx ee_a (fromIntegral $ length ee)
+
 -- * Types
 
 -- -------------
