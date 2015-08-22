@@ -7,7 +7,7 @@ Name:                bindings-yices
 -- The package version. See the Haskell package versioning policy
 -- (http://www.haskell.org/haskellwiki/Package_versioning_policy) for
 -- standards guiding when and how versions should be incremented.
-Version:             0.3
+Version:             0.3.0.1
 
 -- A short (one-line) description of the package.
 Synopsis:            Bindings to the Yices theorem prover
@@ -42,6 +42,10 @@ Build-type:          Simple
 -- Constraint on the version of Cabal needed to build this package.
 Cabal-version:       >=1.2
 
+source-repository head
+  type:     git
+  location: git://github.com/pepeiborra/bindings-yices
+                     
 Flag yices-dynamic
   default: True
 
